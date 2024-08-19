@@ -1,0 +1,39 @@
+
+CREATE KEYSPACE IF NOT EXISTS cran_logs
+WITH replication = {
+    'class': 'SimpleStrategy',
+    'replication_factor': 1
+};
+
+CREATE TABLE IF NOT EXISTS cran_logs.package_count (
+    package text,
+    count bigint,
+    PRIMARY KEY (package)
+);
+
+CREATE TABLE IF NOT EXISTS cran_logs.top_package (
+    batch_time timestamp,
+    package text,
+    count bigint,
+    PRIMARY KEY (batch_time, package)
+) WITH CLUSTERING ORDER BY (package ASC);
+
+CREATE TABLE IF NOT EXISTS cran_logs.top_countries (
+    batch_time timestamp,
+    country text,
+    count bigint,
+    PRIMARY KEY (batch_time, country)
+) WITH CLUSTERING ORDER BY (country ASC);
+
+CREATE TABLE IF NOT EXISTS cran_logs.ggplot2_downloads (
+    batch_time timestamp,
+    count bigint,
+    PRIMARY KEY (batch_time)
+);
+
+
+
+CREATE INDEX idx_ggplot2_downloads_count ON cran_logs.ggplot2_downloads (count);
+CREATE INDEX idx_package_count_count ON cran_logs.package_count (count);
+CREATE INDEX idx_top_countries_count ON cran_logs.top_countries (count);
+CREATE INDEX idx_top_package_count ON cran_logs.top_package (count);
